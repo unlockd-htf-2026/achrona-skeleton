@@ -1,0 +1,21 @@
+# Achrona Challenges — caller CI (carved into your fork; do not edit).
+#
+# On every push, this calls the ORG-CONTROLLED verifier by a pinned SHA. The
+# verifier checks out YOUR lib/, runs the authoritative challenge tests against
+# it, and on a green challenge mints a signed proof and reports it. You cannot
+# fake a green here: this workflow only INVOKES the pinned org verifier — it does
+# not run the verdict itself. (Inlining your own job would make the proof's
+# job_workflow_ref point at your fork, which the server rejects.)
+name: Achrona Challenges
+
+on: [push]
+
+jobs:
+  verify:
+    # Pinned by SHA (resolved at org-publish time). NEVER a mutable branch.
+    uses: unlockd-htf-2026/achrona-harness/.github/workflows/verify.yml@d1214db9d5eef456479169b7e82ffe771467f641
+    permissions:
+      # REQUIRED: reusable workflows inherit caller permissions; the verifier
+      # needs id-token: write to mint the OIDC proof.
+      id-token: write
+      contents: read

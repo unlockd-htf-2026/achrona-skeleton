@@ -1,0 +1,7 @@
+# Dart/Flutter build + tool artifacts (do not commit)
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+pubspec.lock
+.packages

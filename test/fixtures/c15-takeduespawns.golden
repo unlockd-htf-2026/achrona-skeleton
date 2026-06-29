@@ -1,0 +1,10 @@
+# manifest: timeOffset,lane,type
+M,1.0,1,spike
+M,2.4,0,glitch
+M,3.1,2,barrier
+# queries: elapsed,emittedIndicesPipeSeparated
+Q,0.5,
+Q,1.0,0
+Q,1.0,
+Q,3.5,1|2
+Q,99.0,

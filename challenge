@@ -1,0 +1,49 @@
+#!/usr/bin/env sh
+# ./challenge <id> — run ONE Achrona challenge's test and report pass/fail.
+#
+# The carved skeleton is a Flutter package (it depends on Flame), so this runs
+# the Flutter test runner (the plain Dart runner cannot run a Flutter package).
+# This is the single local command (HARNESS-03); it hides the test plumbing.
+set -u
+
+usage() {
+  echo "Usage: ./challenge <id>"
+  echo
+  echo "Valid challenge ids:"
+  echo "  c1-stepy            (Base)         test/challenges/c1_stepy_test.dart"
+  echo "  c11-desyncnetrate   (Creative)     test/challenges/c11_desyncnetrate_test.dart"
+  echo "  c15-takeduespawns   (Online-Elite) test/challenges/c15_takeduespawns_test.dart"
+  echo
+  echo "Briefs: see CHALLENGES.md"
+}
+
+if [ "$#" -ne 1 ]; then
+  usage
+  exit 2
+fi
+
+case "$1" in
+  c1-stepy)          FILE="test/challenges/c1_stepy_test.dart" ;;
+  c11-desyncnetrate) FILE="test/challenges/c11_desyncnetrate_test.dart" ;;
+  c15-takeduespawns) FILE="test/challenges/c15_takeduespawns_test.dart" ;;
+  *)
+    echo "Unknown challenge id: $1"
+    echo
+    usage
+    exit 2
+    ;;
+esac
+
+echo "Running challenge $1 -> $FILE"
+echo "Brief: CHALLENGES.md (row $1)"
+echo
+
+if flutter test "$FILE"; then
+  echo
+  echo "PASS: $1 is GREEN. See CHALLENGES.md for the globe node it lights up."
+  exit 0
+else
+  echo
+  echo "FAIL: $1 is still RED. Read the brief in CHALLENGES.md and edit lib/ to fix it."
+  exit 1
+fi

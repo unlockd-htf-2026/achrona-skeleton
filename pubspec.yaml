@@ -1,0 +1,25 @@
+name: achrona_engine
+description: "The Curse of Achrona — forkable challenge skeleton (carved; do not hand-edit lib seams except the challenge you are solving)."
+version: 1.0.0
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flame: ^1.37.0
+  flame_audio: ^2.12.1
+  flutter:
+    sdk: flutter
+  http: ^1.0.0
+  logging: ^1.2.0
+  web: '>=0.5.0 <2.0.0'
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^10.2.0
+
+flutter:
+  shaders:
+    - shaders/desync.frag
