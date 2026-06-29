@@ -1,0 +1,23 @@
+# Achrona Challenges — student feedback CI (carved into your fork; edit freely).
+#
+# Runs YOUR local challenge tests so you see green/red as you implement each
+# challenge. This does NOT decide the official verdict and sends nothing to the
+# server — the org grades every team repo on a schedule against the sealed
+# answer. Just keep turning your challenge tests green.
+name: Achrona Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter test test/challenges
