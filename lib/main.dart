@@ -544,10 +544,6 @@ class _GlobePageState extends State<GlobePage> {
 
   Future<void> _play() async {
     _away = true;
-    // ponytail: wall-clock since the run (or the last clear) began, intro
-    // included — onCleared carries no time. Pass the run's own seconds
-    // through onCleared if best times ever need to be exact.
-    final clock = Stopwatch()..start();
     // One route for the whole run: N swaps the level inside it. A
     // pushReplacement would finish this await while the player is still
     // playing, and the globe would think they were back.
@@ -556,7 +552,10 @@ class _GlobePageState extends State<GlobePage> {
         builder: (_) => _LevelRun(
           start: _levels[_level].$2,
           hero: kHeroes[_hero],
-          onCleared: (spec) {
+          // N can swap in any level, ours or a team's: name it from _levels.
+          nameOf: (spec) =>
+              _levels.where((l) => identical(l.$2, spec)).firstOrNull?.$1,
+          onCleared: (spec, seconds) {
             final i = _levels.indexWhere((l) => identical(l.$2, spec));
             if (i >= 0 && _cleared.add(i)) {
               _newlyCleared.add(i);
@@ -566,10 +565,8 @@ class _GlobePageState extends State<GlobePage> {
             // The first one drains the owner's continent and Realtime flares it.
             final t = i - kLevels.length;
             if (t >= 0) {
-              unawaited(reportLevelClear(_teams[t],
-                  seconds: clock.elapsedMilliseconds / 1000));
+              unawaited(reportLevelClear(_teams[t], seconds: seconds));
             }
-            clock.reset();
           },
         ),
       ),
@@ -924,11 +921,19 @@ class _FpsState extends State<_Fps> with SingleTickerProviderStateMixin {
 /// as before.
 class _LevelRun extends StatefulWidget {
   const _LevelRun(
-      {required this.start, required this.hero, required this.onCleared});
+      {required this.start,
+      required this.hero,
+      required this.nameOf,
+      required this.onCleared});
 
   final LevelSpec start;
   final HeroKind hero;
-  final ValueChanged<LevelSpec> onCleared;
+
+  /// The level's display name: ours, or a team's `team · card`.
+  final String? Function(LevelSpec) nameOf;
+
+  /// A level's gate was reached, with the run's play time in seconds.
+  final void Function(LevelSpec spec, double seconds) onCleared;
 
   @override
   State<_LevelRun> createState() => _LevelRunState();
@@ -941,6 +946,7 @@ class _LevelRunState extends State<_LevelRun> {
   Widget build(BuildContext context) => LevelOne(
         key: ObjectKey(_spec),
         spec: _spec,
+        name: widget.nameOf(_spec),
         hero: widget.hero,
         onCleared: widget.onCleared,
         onNext: (next) => setState(() => _spec = next),

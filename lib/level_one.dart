@@ -144,6 +144,12 @@ const List<(String, int, int)> _levelOneObjects = [
 /// One 16px engine tile = one world unit; kit models are a 2-unit grid.
 const double _px = kPx;
 const double _kit = 0.5;
+
+/// Model extents at authored scale (measured from the .glb bounds), so
+/// dressing can sit *against* a slab rather than through it.
+const double kSupportHeight = 4.11; // ruins/Support_Center, origin at its foot
+const double _floorDepth = 0.25 * _kit; // ruins/Floor_Standard, top at 0
+const double _halfSlabDepth = 0.08 * _kit; // ruins/Floor_Standard_Half
 // The Achrona palette is the globe's (`globe/palette.dart`): one neon, one
 // cyan, on both screens.
 const int _neon = kNeon;
@@ -153,6 +159,11 @@ const int _cyan = kCyan;
 /// colour says what it does. One constant each, to play with.
 const int kSolidGlow = kNeon;
 const int kOneWayGlow = _cyan;
+
+/// Ground that hurts. The spikes are authored near-black and vanished on the
+/// dark floor; lit red from beneath they read as a silhouette against danger.
+/// The one warm colour besides the torches.
+const int kHazardGlow = 0xFFFF3A2E;
 
 /// The map's own object names, mapped to the monster pack. The roster split
 /// the handoff flagged shows up immediately: none of these share the hero's
@@ -361,7 +372,7 @@ const LevelSpec kLevelThree = LevelSpec(
   rows: buildLevelThreeRows,
   objects: _levelThreeObjects,
   intro: (
-    'THE DESYNC CORE BURNS AT THE TOP',
+    'THE DESYNC CORE BURNS HALFWAY UP — IT WILL LIFT YOU HIGHER',
     'CLIMB — THREE FRAGMENTS STILL HOLD THE GATE',
   ),
 );
@@ -375,7 +386,7 @@ const LevelSpec kLevelTwo = LevelSpec(
   objects: _levelTwoObjects,
   intro: (
     'THE DESYNC TOOK THE FLOOR HERE',
-    'DOWN IS THE ONLY WAY OUT — FIND THREE MORE',
+    'DOWN IS THE ONLY WAY OUT — FIND THREE FRAGMENTS',
   ),
   next: kLevelThree,
 );
@@ -711,6 +722,31 @@ const double kBoltHeight = 14;
 /// a hit costs — belongs to the engine or to the clip. Tune it against play,
 /// with a human on the keys.
 const double kSwingReach = 26;
+
+/// The line at the top of a level: which level, and what it wants. For
+/// [kUnlockNoticeFrames] after the core, it says what the core gave instead —
+/// nothing else in the game tells you the double jump is yours.
+String objectiveLine({
+  String? name,
+  required int total,
+  required int found,
+  bool gateLive = false,
+  bool unlocked = false,
+  bool dashIsNew = true,
+}) {
+  if (unlocked) {
+    return dashIsNew
+        ? 'DOUBLE JUMP + DASH UNLOCKED — jump again in mid-air · Shift to dash'
+        : 'DOUBLE JUMP UNLOCKED — jump again in mid-air';
+  }
+  final goal = gateLive
+      ? 'THE GATE IS OPEN — reach it'
+      : 'FIND $total DESYNC FRAGMENTS · $found found';
+  return name == null ? goal : '$name — $goal';
+}
+
+/// How long the core's unlock notice holds the top line: three seconds.
+const int kUnlockNoticeFrames = 180;
 
 /// The box a swing occupies, in front of whichever way the hero faces. Pulled
 /// out of the widget for the same reason [aabbOverlap] was: reach is the thing
@@ -1075,6 +1111,25 @@ Future<LevelDressing> buildLevelScene(Scene scene, LevelSpec spec) async {
     ),
   );
 
+  // Red where spikes stand: the floor's own edge, and a glow on the walking
+  // surface under them, so black spikes stand out against it.
+  PhysicallyBasedMaterial hazardMaterial(double gain) =>
+      PhysicallyBasedMaterial()
+        ..baseColorFactor = _lin(kHazardGlow)
+        ..emissiveFactor = _lin(kHazardGlow, gain: gain)
+        ..roughnessFactor = 1.0;
+  final hazardEdge = Node(
+    mesh: Mesh(CuboidGeometry(vm.Vector3(1.0, 0.025, 0.02)), hazardMaterial(1.6)),
+  );
+  final hazardFloor = Node(
+    mesh: Mesh(CuboidGeometry(vm.Vector3(1.0, 0.01, 0.8)), hazardMaterial(0.9)),
+  );
+  // The ground cells spikes stand on: objects name the empty cell above.
+  final spikeGround = {
+    for (final (kind, col, row) in spec.objects)
+      if (kind == 'spikes') (col, row + 1),
+  };
+
   final batcher = TileBatcher();
   void place(Node src, double x, double y, double z,
       {double scale = _kit, double rotY = 0}) {
@@ -1085,6 +1140,12 @@ Future<LevelDressing> buildLevelScene(Scene scene, LevelSpec spec) async {
     if (rotY != 0) t.rotateY(rotY);
     batcher.add(src, t);
   }
+
+  // A support stands on its origin and is ~2 units tall at kit scale; it
+  // used to go in at `y - 1`, which put its capital a unit *above* the ledge
+  // it was meant to hold up. Hang it from the underside instead.
+  void bracketUnder(double x, double underside) =>
+      place(support, x, underside - kSupportHeight * _kit, -0.5, scale: _kit);
 
 
   for (var row = 0; row < nRows; row++) {
@@ -1112,7 +1173,8 @@ Future<LevelDressing> buildLevelScene(Scene scene, LevelSpec spec) async {
       // first try put this on the back face, where nobody could see it.
       if (here == TileSolidity.solid &&
           g.solidityAt(col, row - 1) == TileSolidity.empty) {
-        place(solidEdge, x, y - 0.1, 0.51, scale: 1);
+        place(spikeGround.contains((col, row)) ? hazardEdge : solidEdge, x,
+            y - 0.1, 0.51, scale: 1);
       }
       if (here == TileSolidity.oneWayPlatform) {
         // Flush with the stone's camera-side face (authored z +0.05 puts the
@@ -1122,7 +1184,7 @@ Future<LevelDressing> buildLevelScene(Scene scene, LevelSpec spec) async {
         // wall rather than as a plank hanging in the dark.
         if (g.solidityAt(col - 1, row) != TileSolidity.oneWayPlatform ||
             g.solidityAt(col + 1, row) != TileSolidity.oneWayPlatform) {
-          place(support, x, y - 1.0, -0.5, scale: _kit);
+          bracketUnder(x, y - _halfSlabDepth);
         }
       }
       // One-way ledges get the backdrop too. Dressing keyed off solid ground
@@ -1131,22 +1193,32 @@ Future<LevelDressing> buildLevelScene(Scene scene, LevelSpec spec) async {
 
       // Backdrop: two courses at different depths. Real parallax comes for
       // free from perspective — nothing has to fake it.
+      // Only behind solid ground, where the courses run on as a wall. Behind
+      // a one-way ledge they were a lit block floating on the dark —
+      // pasted-on, the playtest said — so a ledge stands against the room's
+      // own back wall. The draw still happens so the seeded dressing
+      // everywhere else stays put.
       final variant = dress.nextInt(6);
-      place(
-          variant == 0
-              ? wallBroken
-              : (variant == 1 ? wallOvergrown : wall),
-          x,
-          y,
-          -1.3);
-      place(wall, x, y + 1.0, -1.3);
-      for (var course = 0; course < 2; course++) {
-        place(wall, x, y + course, -2.8);
+      if (here == TileSolidity.solid) {
+        place(
+            variant == 0
+                ? wallBroken
+                : (variant == 1 ? wallOvergrown : wall),
+            x,
+            y,
+            -1.3);
+        place(wall, x, y + 1.0, -1.3);
+        for (var course = 0; course < 2; course++) {
+          place(wall, x, y + course, -2.8);
+        }
       }
 
       // Columns frame the corridor; torches are the only warm light in it.
-      if (col % 7 == 3) place(column, x, y, -1.0, scale: _kit * 0.9);
-      if (col % 10 == 1) {
+      // Solid ground only: over a one-way ledge there is no near wall left
+      // for a column to rise against or a torch to hang on.
+      final walled = here == TileSolidity.solid;
+      if (walled && col % 7 == 3) place(column, x, y, -1.0, scale: _kit * 0.9);
+      if (walled && col % 10 == 1) {
         place(torch, x, y + 1.3, -1.05, scale: _kit * 1.1);
         final lamp = Node()
           ..position = vm.Vector3(x, y + 1.45, -0.9)
@@ -1193,7 +1265,7 @@ Future<LevelDressing> buildLevelScene(Scene scene, LevelSpec spec) async {
         // built rather than as floating stone.
         if ((leftOpen || rightOpen) &&
             g.solidityAt(col, row + 1) == TileSolidity.empty) {
-          place(support, x, y - 1.0, -0.5, scale: _kit);
+          bracketUnder(x, y - _floorDepth);
         }
       }
       // (No foreground silhouette layer: the floor tile is one unit deep,
@@ -1321,6 +1393,7 @@ Future<LevelDressing> buildLevelScene(Scene scene, LevelSpec spec) async {
     if (kind == 'spikes') {
       final feet = objectFeet(col, row, nRows);
       place(spikes, feet.x, feet.y, 0, scale: _kit * 1.1);
+      place(hazardFloor, feet.x, feet.y + 0.006, 0, scale: 1);
     }
   }
 
@@ -1347,10 +1420,17 @@ class LevelOne extends StatefulWidget {
     this.hero = kRanger,
     this.onCleared,
     this.onNext,
+    this.name,
   });
 
-  /// Told when [spec]'s gate is reached — the globe marks its landmark.
-  final ValueChanged<LevelSpec>? onCleared;
+  /// Its name on the globe ("II · THE DESCENT"), shown at the top — levels
+  /// look alike, and the opening that names them can be skipped.
+  final String? name;
+
+  /// Told when [spec]'s gate is reached — the globe marks its landmark —
+  /// with the run's play time in seconds: the same clock the end screen and
+  /// the run push use (fixed-step frames, the opening excluded).
+  final void Function(LevelSpec spec, double seconds)? onCleared;
 
   /// Asked to go on to the next level. Without it (the standalone build) the
   /// level replaces its own route.
@@ -1383,6 +1463,8 @@ class _LevelOneState extends State<LevelOne> with SingleTickerProviderStateMixin
   final List<(double, double)> _hazards = [];
   int _fragments = 0;
   int _fragmentTotal = 0;
+  int _unlockFrames = 0;
+  bool _dashIsNew = true;
   bool _won = false;
   bool _gateLive = false;
   int _lives = 3;
@@ -2193,6 +2275,7 @@ class _LevelOneState extends State<LevelOne> with SingleTickerProviderStateMixin
     if (_attackFrames > 0) _attackFrames--;
     if (_interactFrames > 0) _interactFrames--;
     if (_hitFlash > 0) _hitFlash--;
+    if (_unlockFrames > 0) _unlockFrames--;
 
     if (b.isDead) {
       if (++_deadFrames > 70 && !_gameOver) {
@@ -2244,8 +2327,10 @@ class _LevelOneState extends State<LevelOne> with SingleTickerProviderStateMixin
       } else {
         // The gate is the engine's flag, so the new traversal is the engine's
         // behaviour — the renderer only stopped drawing an orb.
+        _dashIsNew = !b.hasDash;
         b.hasDoubleJump = true;
         b.hasDash = true;
+        _unlockFrames = kUnlockNoticeFrames;
       }
     }
 
@@ -2272,7 +2357,7 @@ class _LevelOneState extends State<LevelOne> with SingleTickerProviderStateMixin
         aabbOverlap(px, py, pw, ph, door.x, door.y, 40, 56)) {
       _won = true;
       _pushRun(completed: true);
-      widget.onCleared?.call(widget.spec);
+      widget.onCleared?.call(widget.spec, _runFrames / 60);
     }
 
     for (final e in _enemies) {
@@ -2562,13 +2647,17 @@ class _LevelOneState extends State<LevelOne> with SingleTickerProviderStateMixin
               child: Text(
                 _won || _caption != null
                     ? ''
-                    : _gateLive
-                        ? 'THE GATE IS OPEN — reach it'
-                        : 'FIND $_fragmentTotal DESYNC FRAGMENTS '
-                            '· $_fragments found',
+                    : objectiveLine(
+                        name: widget.name,
+                        total: _fragmentTotal,
+                        found: _fragments,
+                        gateLive: _gateLive,
+                        unlocked: _unlockFrames > 0,
+                        dashIsNew: _dashIsNew,
+                      ),
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: _gateLive
+                  color: _gateLive || _unlockFrames > 0
                       ? const Color(0xFF2BE2FF)
                       : Colors.white.withValues(alpha: 0.5),
                   fontSize: 13,
@@ -2830,7 +2919,7 @@ class _LevelOneState extends State<LevelOne> with SingleTickerProviderStateMixin
                     _won = true;
                     _pushRun(completed: true);
                   });
-                  widget.onCleared?.call(widget.spec);
+                  widget.onCleared?.call(widget.spec, _runFrames / 60);
                 }),
                 const SizedBox(width: 10),
                 // A full Desync burst on demand — the glitch is otherwise only
