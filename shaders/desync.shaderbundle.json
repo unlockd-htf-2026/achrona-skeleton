@@ -1,0 +1,6 @@
+{
+  "DesyncFragment": {
+    "type": "fragment",
+    "file": "shaders/desync.frag"
+  }
+}

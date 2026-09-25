@@ -1,0 +1,17 @@
+name: achrona_platformer_engine
+description: "Metroid-style platformer engine for Achrona — deterministic fixed-step sim + Flame wrapper."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flame: ^1.37.0
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^10.2.0

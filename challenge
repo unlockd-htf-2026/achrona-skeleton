@@ -1,49 +1,25 @@
-#!/usr/bin/env sh
-# ./challenge <id> — run ONE Achrona challenge's test and report pass/fail.
-#
-# The carved skeleton is a Flutter package (it depends on Flame), so this runs
-# the Flutter test runner (the plain Dart runner cannot run a Flutter package).
-# This is the single local command (HARNESS-03); it hides the test plumbing.
-set -u
-
-usage() {
-  echo "Usage: ./challenge <id>"
-  echo
-  echo "Valid challenge ids:"
-  echo "  c1-stepy            (Base)         test/challenges/c1_stepy_test.dart"
-  echo "  c11-desyncnetrate   (Creative)     test/challenges/c11_desyncnetrate_test.dart"
-  echo "  c15-takeduespawns   (Online-Elite) test/challenges/c15_takeduespawns_test.dart"
-  echo
-  echo "Briefs: see CHALLENGES.md"
+#!/usr/bin/env bash
+# ./challenge <id>   — run one challenge's tests (see CHALLENGES.md)
+# ./challenge all    — a green/red line per challenge
+set -uo pipefail
+cd "$(dirname "$0")"
+# The kit needs Flutter 3.47 (.fvmrc); use fvm's pin when it is installed.
+flutter() { if command -v fvm >/dev/null; then fvm flutter "$@"; else command flutter "$@"; fi; }
+run() {
+  case "$1" in
+  base-01) flutter test test/level_spec_test.dart test/level_reach_test.dart --plain-name 'YOUR LEVEL' ;;
+  base-02) flutter test test/challenges/base_02_camera_test.dart ;;
+  base-03) flutter test test/challenges/base_03_facing_test.dart ;;
+  build-01) flutter test test/challenges/build_01_feet_test.dart ;;
+  build-02) flutter test test/challenges/build_02_lean_test.dart ;;
+  online-01) flutter test test/run_link_test.dart --plain-name 'RunLink.submit' ;;
+  *) echo "unknown challenge: $1 (see CHALLENGES.md)"; return 2 ;;
+  esac
 }
-
-if [ "$#" -ne 1 ]; then
-  usage
-  exit 2
-fi
-
-case "$1" in
-  c1-stepy)          FILE="test/challenges/c1_stepy_test.dart" ;;
-  c11-desyncnetrate) FILE="test/challenges/c11_desyncnetrate_test.dart" ;;
-  c15-takeduespawns) FILE="test/challenges/c15_takeduespawns_test.dart" ;;
-  *)
-    echo "Unknown challenge id: $1"
-    echo
-    usage
-    exit 2
-    ;;
-esac
-
-echo "Running challenge $1 -> $FILE"
-echo "Brief: CHALLENGES.md (row $1)"
-echo
-
-if flutter test "$FILE"; then
-  echo
-  echo "PASS: $1 is GREEN. See CHALLENGES.md for the globe node it lights up."
-  exit 0
+if [ "${1:-}" = all ]; then
+  for id in base-01 base-02 base-03 build-01 build-02 online-01; do
+    if run "$id" >/dev/null 2>&1; then echo "GREEN $id"; else echo "red   $id"; fi
+  done
 else
-  echo
-  echo "FAIL: $1 is still RED. Read the brief in CHALLENGES.md and edit lib/ to fix it."
-  exit 1
+  run "${1:?usage: ./challenge <id>|all}"
 fi

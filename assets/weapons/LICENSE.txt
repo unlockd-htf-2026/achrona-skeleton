@@ -1,0 +1,7 @@
+sword.glb, spear.glb, bow.glb, shield.glb — "Medieval Weapons Pack" by Quaternius
+(Sword.obj, Spear.obj, Bow_Wooden.obj, Shield_Heater_2.obj), converted OBJ -> GLB with assimp; the
+materials are flat colours, so the conversion is lossless.
+https://quaternius.com/packs/medievalweapons.html
+
+License: CC0 1.0 Universal (public domain)
+https://creativecommons.org/publicdomain/zero/1.0/
