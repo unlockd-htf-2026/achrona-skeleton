@@ -4,7 +4,7 @@ packages:
   achrona_platformer_engine:
     dependency: "direct main"
     description:
-      path: "../../packages/achrona_platformer_engine"
+      path: "packages/achrona_platformer_engine"
       relative: true
     source: path
     version: "0.1.0"
@@ -569,13 +569,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
-  unlockd_scene_snapshots:
-    dependency: "direct dev"
-    description:
-      path: "../../packages/unlockd_scene_snapshots"
-      relative: true
-    source: path
-    version: "0.1.1"
   vector_math:
     dependency: "direct main"
     description:

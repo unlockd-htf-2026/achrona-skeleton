@@ -69,15 +69,30 @@ class _Title extends StatelessWidget {
   const _Title();
 
   @override
-  Widget build(BuildContext context) => Text(
-        'ACHRONA',
-        style: TextStyle(
-          color: Colors.white.withValues(alpha: 0.30),
-          fontSize: 38,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 6,
-          height: 1,
-        ),
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'ACHRONA',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.30),
+              fontSize: 38,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 6,
+              height: 1,
+            ),
+          ),
+          const SizedBox(height: 6),
+          // The event's challenge: healing a node is resyncing it.
+          Text(
+            'RESYNC THE DESYNC',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.30),
+              fontSize: 12,
+              letterSpacing: 4.5,
+            ),
+          ),
+        ],
       );
 }
 
@@ -166,8 +181,8 @@ class _Legend extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           const _LegendRow(color: kCorruptLand, label: 'CORRUPTED'),
-          const _LegendRow(color: 0xFF7B6BD6, label: 'HEALING'),
-          const _LegendRow(color: kHealedLand, label: 'CLEAN'),
+          const _LegendRow(color: 0xFF7B6BD6, label: 'RESYNCING'),
+          const _LegendRow(color: kHealedLand, label: 'IN SYNC'),
           const SizedBox(height: 8),
           Text(
             'CORRUPTION ${pct == null ? "—" : "${pct.round()}%"}',

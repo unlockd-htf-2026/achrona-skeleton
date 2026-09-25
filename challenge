@@ -7,7 +7,7 @@ cd "$(dirname "$0")"
 flutter() { if command -v fvm >/dev/null; then fvm flutter "$@"; else command flutter "$@"; fi; }
 run() {
   case "$1" in
-  base-01) flutter test test/level_spec_test.dart test/level_reach_test.dart --plain-name 'YOUR LEVEL' ;;
+  base-01) flutter test test/level_spec_test.dart test/level_reach_test.dart ;;
   base-02) flutter test test/challenges/base_02_camera_test.dart ;;
   base-03) flutter test test/challenges/base_03_facing_test.dart ;;
   build-01) flutter test test/challenges/build_01_feet_test.dart ;;

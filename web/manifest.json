@@ -1,11 +1,11 @@
 {
-    "name": "Achrona",
+    "name": "Achrona — Resync the Desync",
     "short_name": "Achrona",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "The Curse of Achrona — Resync the Desync. A 3D game from Hack the Future.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

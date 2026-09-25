@@ -35,6 +35,7 @@ import 'team_levels.dart' show rateLevel;
 export 'kit.dart';
 
 void main() => runApp(const MaterialApp(
+      title: 'Achrona — Resync the Desync',
       debugShowCheckedModeBanner: false,
       home: LevelOne(),
     ));

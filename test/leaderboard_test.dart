@@ -6,6 +6,8 @@ import 'dart:io';
 
 import 'package:achrona/leaderboard.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 
 void main() {
   final board = Board.fromJson(jsonDecode(
@@ -90,5 +92,29 @@ void main() {
     await t.pump(const Duration(milliseconds: 1));
     expect(fetches, 1);
     d.cancel();
+  });
+
+  test('the board comes from the leaderboard_json RPC when Supabase is set',
+      () async {
+    late http.Request sent;
+    final b = await fetchBoard(
+        server: '',
+        supabaseUrl: 'http://s',
+        anonKey: 'anon',
+        client: MockClient((r) async {
+          sent = r;
+          // Postgres numerics keep trailing zeros; timestamps end in +00:00.
+          return http.Response(
+              '{"generated_at":"2026-10-08T14:30:00+00:00","weights":{"code":0.30},'
+              '"challenges":["base-01"],"teams":[{"team_id":"t","team":"x","is_test":false,'
+              '"total":83.10,"rank":1,"aspects":{"code":{"score":100.00,"weight":0.30,"rank":1}},'
+              '"breakdown":{},"players":[]}]}',
+              200);
+        }));
+    expect(sent.method, 'POST');
+    expect(sent.url.toString(), 'http://s/rest/v1/rpc/leaderboard_json');
+    expect(sent.headers['apikey'], 'anon');
+    expect(b.teams.single.total, 83.1);
+    expect(b.generatedAt, isNotNull);
   });
 }

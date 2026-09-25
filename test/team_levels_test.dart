@@ -240,4 +240,35 @@ void main() {
       expect(ok, isFalse);
     });
   });
+
+  group('reads from Supabase when it is configured', () {
+    test('team levels: team_games_public, anon key, wrapped as manifests',
+        () async {
+      late http.Request sent;
+      final levels = await loadTeamLevels(
+          server: 'http://w',
+          supabaseUrl: 'http://s',
+          anonKey: 'anon',
+          client: MockClient((r) async {
+            sent = r;
+            return http.Response.bytes(
+                utf8.encode(jsonEncode([
+                  {
+                    'team_id': 'id-a',
+                    'manifest': {'version': 2, 'team': 'a', 'concept': 'ramparts', 'level': kMyLevel.toJson()},
+                    'version': 2,
+                    'verified_at': '2026-10-08T10:00:00+00:00',
+                    'slot': 0,
+                  },
+                ])),
+                200,
+                headers: {'content-type': 'application/json; charset=utf-8'});
+          }));
+      expect(sent.url.path, '/rest/v1/team_games_public');
+      expect(sent.url.queryParameters['select'], contains('manifest'));
+      expect(sent.headers['apikey'], 'anon');
+      expect(sent.headers['Authorization'], 'Bearer anon');
+      expect(levels.single.teamId, 'id-a');
+    });
+  });
 }

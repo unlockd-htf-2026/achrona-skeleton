@@ -1,6 +1,7 @@
 # Challenges
 
 Run one with `./challenge <id>`; `./challenge all` runs them all.
+On Windows without Git Bash: `.\challenge.ps1 <id>` (PowerShell).
 Base is the floor every team reaches; Build and Online go further.
 Needs Flutter 3.47 (`.fvmrc`): with fvm, `fvm flutter ...`.
 Do them in any order.
@@ -31,9 +32,15 @@ Done when `./challenge base-01` is green.
 4. The rules the test checks: the level can be finished; the core can be
    reached with single jumps; the gate can NOT be reached without the core;
    and it meets your card's rule.
+5. Push. When the organisers' grader turns base-01 green (within ~5 min) it
+   publishes your level for every team: restart the app and it is in
+   LEVEL ▾ as "<your team> · <your card>".
+6. Finish THAT entry yourself, all three fragments: your level only counts
+   (and other teams only score for finishing it) once your own team has.
 Concept — measured off the real physics: a single jump clears a 3-tile gap
-and climbs 3 rows; a double jump clears 8 tiles. Play it from the globe:
-LEVEL ▾ → IV · YOUR LEVEL.
+and climbs 3 rows; a double jump clears 8 tiles. While you build, try it
+from LEVEL ▾ → IV · YOUR LEVEL: that is your local copy, and finishing it
+there does not count for anything.
 
 ## base-02 — Put the camera on the right side (Base)
 
@@ -69,7 +76,9 @@ Goal: every monster, fragment, spike and the gate stands on the ground, in
 the middle of its tile — where the physics thinks it is.
 Hints: objects are named by the empty cell they occupy; `tileToWorld` gives
 a cell's top-left corner; the models are centred on their own origin.
-Graded by a render of your level compared with the reference render.
+`./challenge build-01` on your laptop checks the numbers (where the feet
+land). The organisers' grader also renders your level and compares the picture
+with the reference render, so the feet must really be on the floor.
 
 ## build-02 — Show the sword arm (Build)
 
@@ -90,3 +99,8 @@ Goal: a finished run heals Achrona. `RunLink.submit` in
 as a Bearer token, `mode: race`) and turn the answer into a `RunHeal`.
 Hints: `runScore` already scores the run; `test/run_link_test.dart` shows
 exactly what the server sends and expects.
+The answer maps onto `RunHeal` like this: `kept` present -> `improved` false
+(absent -> true); `unlocked_count` -> `unlocked`; each `drained[]` entry's
+`challenge_id` and `amount` -> one `healed` node. The `_json` helper below
+`submit` turns a response into a map, and throws the Worker's reason on an
+error.

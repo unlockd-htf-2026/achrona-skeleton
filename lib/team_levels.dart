@@ -20,6 +20,9 @@ import 'session.dart';
 /// Where the Worker is and who we are: the same `--dart-define`s as RunLink.
 const _server = String.fromEnvironment('AI_SERVER_URL');
 const _teamKey = String.fromEnvironment('TEAM_API_KEY');
+// Reads go straight to Supabase (legacy anon JWT) when configured.
+const _supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+const _supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 
 /// Team-level slots there are: three per continent, four continents.
 const int kTeamSlots = 12;
@@ -59,15 +62,33 @@ class TeamLevel {
 /// server is configured and answers, else the local assets. One that does not
 /// parse is left out, not allowed to break the globe for everyone else.
 Future<List<TeamLevel>> loadTeamLevels(
-    {String server = _server, http.Client? client}) async {
-  if (server.isNotEmpty) {
+    {String server = _server,
+    String supabaseUrl = _supabaseUrl,
+    String anonKey = _supabaseAnonKey,
+    http.Client? client}) async {
+  final supabase = supabaseUrl.isNotEmpty && anonKey.isNotEmpty;
+  if (supabase || server.isNotEmpty) {
     final c = client ?? http.Client();
     try {
-      final r = await c
-          .get(Uri.parse('$server/team-game'))
-          .timeout(const Duration(seconds: 8));
+      // Reads come from Supabase's public view when it is configured (the
+      // Worker only takes writes); the rows are what /team-game wraps.
+      final r = supabase
+          ? await c.get(
+              Uri.parse('$supabaseUrl/rest/v1/team_games_public').replace(
+                  queryParameters: {
+                    'select': 'team_id,manifest,version,updated_at,'
+                        'manifest_hash,verified_at,slot',
+                  }),
+              headers: {'apikey': anonKey, 'Authorization': 'Bearer $anonKey'},
+            ).timeout(const Duration(seconds: 8))
+          : await c
+              .get(Uri.parse('$server/team-game'))
+              .timeout(const Duration(seconds: 8));
       if (r.statusCode != 200) throw Exception('${r.statusCode} ${r.body}');
-      return teamLevelsFromBackend(jsonDecode(r.body) as Map<String, dynamic>);
+      final body = jsonDecode(r.body);
+      return teamLevelsFromBackend(body is List
+          ? {'manifests': body}
+          : body as Map<String, dynamic>);
     } catch (e) {
       debugPrint('team levels offline, using the local ones: $e');
     } finally {

@@ -165,18 +165,41 @@ const _aspectNames = {
   'creativity': 'Creativity',
 };
 
-/// Fetches the board: the Worker when configured, else the bundled fixture.
-Future<Board> fetchBoard({http.Client? client}) async {
-  if (_server.isEmpty) {
-    return Board.fromJson(jsonDecode(
-            await rootBundle.loadString('assets/leaderboard/fixture.json'))
-        as Map<String, dynamic>);
+/// Fetches the board: Supabase's `leaderboard_json` RPC when configured (the
+/// same JSON as the Worker's; reads stay off the Worker), else the Worker's
+/// `GET /leaderboard`, else the bundled fixture.
+Future<Board> fetchBoard(
+    {String server = _server,
+    String supabaseUrl = _supabaseUrl,
+    String anonKey = _supabaseAnonKey,
+    http.Client? client}) async {
+  final c = client ?? http.Client();
+  try {
+    final http.Response res;
+    if (supabaseUrl.isNotEmpty && anonKey.isNotEmpty) {
+      res = await c
+          .post(Uri.parse('$supabaseUrl/rest/v1/rpc/leaderboard_json'),
+              headers: {
+                'apikey': anonKey,
+                'Authorization': 'Bearer $anonKey',
+                'Content-Type': 'application/json',
+              },
+              body: '{}')
+          .timeout(const Duration(seconds: 8));
+    } else if (server.isNotEmpty) {
+      res = await c
+          .get(Uri.parse('$server/leaderboard'))
+          .timeout(const Duration(seconds: 8));
+    } else {
+      return Board.fromJson(jsonDecode(
+              await rootBundle.loadString('assets/leaderboard/fixture.json'))
+          as Map<String, dynamic>);
+    }
+    if (res.statusCode != 200) throw Exception('leaderboard ${res.statusCode}');
+    return Board.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+  } finally {
+    if (client == null) c.close();
   }
-  final res = await (client ?? http.Client())
-      .get(Uri.parse('$_server/leaderboard'))
-      .timeout(const Duration(seconds: 8));
-  if (res.statusCode != 200) throw Exception('leaderboard ${res.statusCode}');
-  return Board.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 }
 
 // ---------------------------------------------------------------------------

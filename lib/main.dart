@@ -46,7 +46,11 @@ import 'my_level.dart';
 import 'team_levels.dart';
 
 void main() => runApp(
-  const MaterialApp(debugShowCheckedModeBanner: false, home: GlobePage()),
+  const MaterialApp(
+    title: 'Achrona — Resync the Desync',
+    debugShowCheckedModeBanner: false,
+    home: GlobePage(),
+  ),
 );
 
 class GlobePage extends StatefulWidget {
