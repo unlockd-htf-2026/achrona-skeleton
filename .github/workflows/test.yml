@@ -1,24 +1,51 @@
-# Achrona Challenges — student feedback CI (carved into your fork; edit freely).
-#
-# Runs YOUR local challenge tests so you see green/red as you implement each
-# challenge. This does NOT decide the official verdict and sends nothing to the
-# server — the org grades every team repo on a schedule against the sealed
-# answer. Just keep turning your challenge tests green.
+# Your team's CI, run by hand (Actions -> Achrona Tests -> Run workflow): it
+# shows which challenges are green (see the run's summary). It is feedback
+# only: the organisers' grader decides the score, every ~5 minutes, and
+# `./challenge all` on your laptop tells you the same thing faster. It goes red
+# only when the app itself is broken (it does not compile) -- a challenge that
+# is not solved yet is fine.
 name: Achrona Tests
 
+# Manual only: the event's GitHub Actions minutes go to the grader.
 on:
-  push:
-  pull_request:
+  workflow_dispatch:
+
+# A newer run replaces one still going.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: 3.47.5
           channel: stable
           cache: true
       - run: flutter pub get
-      - run: flutter test test/challenges
+      # Must pass: the app compiles. Warnings and hints do not fail it.
+      - run: flutter analyze --no-fatal-infos --no-fatal-warnings
+      # Feedback: which challenges are green. Never fails the job.
+      - name: Challenges
+        run: |
+          ./challenge all | tee challenges.txt
+          green=$(grep -c '^GREEN' challenges.txt || true)
+          total=$(wc -l < challenges.txt | tr -d ' ')
+          {
+            echo "## $green / $total challenges green"
+            echo
+            echo "| challenge | |"
+            echo "|---|---|"
+            while read -r status id; do
+              if [ "$status" = GREEN ]; then mark="green"; else mark="not yet"; fi
+              echo "| \`$id\` | $mark |"
+            done < challenges.txt
+            echo
+            echo "Run \`./challenge <id>\` on your laptop to see why one is not green yet."
+            echo "The organisers' grader decides the score; this is feedback only."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::notice title=Challenges::$green / $total green"
