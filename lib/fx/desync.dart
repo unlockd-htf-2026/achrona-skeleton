@@ -36,3 +36,28 @@ Future<PostEffect?> addDesyncEffect(Scene scene) async {
 void setDesync(PostEffect? fx, double intensity) => fx
   ?..enabled = intensity > 0.001
   ..setUniformBlockFromFloats('DesyncInfo', [intensity, 0, 0, 0]);
+
+/// Composites the finished globe frame over the page colour [argb] and makes
+/// it opaque (`shaders/opaque.frag`). Add it after [addDesyncEffect] so it is
+/// the last pass. Without it Safari blows the translucent corona out into a
+/// solid disc; see the shader for why.
+Future<void> addOpaqueBackdrop(Scene scene, int argb) async {
+  try {
+    final lib = await gpu.loadShaderLibraryAsync(
+      await gpu.resolveShaderBundleKey('desync', package: 'achrona'),
+    );
+    final shader = lib?['OpaqueFragment'];
+    if (shader == null) return;
+    scene.postProcess.customEffects.add(PostEffect(
+      fragmentShader: shader,
+      insertion: PostInsertion.afterTonemap,
+    )..setUniformBlockFromFloats('OpaqueInfo', [
+        ((argb >> 16) & 0xFF) / 255,
+        ((argb >> 8) & 0xFF) / 255,
+        (argb & 0xFF) / 255,
+        1,
+      ]));
+  } catch (e) {
+    debugPrint('opaque backdrop unavailable: $e');
+  }
+}

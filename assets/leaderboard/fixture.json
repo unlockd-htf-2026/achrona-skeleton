@@ -1,0 +1,1445 @@
+{
+ "generated_at": "2026-10-08T14:30:00Z",
+ "weights": {
+  "code": 0.3,
+  "play": 0.2,
+  "quality": 0.15,
+  "rating": 0.15,
+  "design": 0.0,
+  "creativity": 0.2
+ },
+ "challenges": [
+  "base-01",
+  "base-02",
+  "base-03",
+  "build-01",
+  "build-02",
+  "online-01"
+ ],
+ "teams": [
+  {
+   "team_id": "00000000-0000-0000-0000-000000000001",
+   "team": "Byte Knights",
+   "is_test": false,
+   "total": 81.3,
+   "rank": 1,
+   "aspects": {
+    "code": {
+     "score": 100.0,
+     "weight": 0.3,
+     "rank": 1
+    },
+    "play": {
+     "score": 85.7,
+     "weight": 0.2,
+     "rank": 1
+    },
+    "quality": {
+     "score": 71.4,
+     "weight": 0.15,
+     "rank": 1
+    },
+    "rating": {
+     "score": 65.5,
+     "weight": 0.15,
+     "rank": 2
+    },
+    "design": {
+     "score": 77.5,
+     "weight": 0.0,
+     "rank": 1
+    },
+    "creativity": {
+     "score": 53.0,
+     "weight": 0.2,
+     "rank": 3
+    }
+   },
+   "breakdown": {
+    "code": {
+     "passed": 6,
+     "of": 6,
+     "challenges": [
+      {
+       "id": "base-01",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "base-02",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "base-03",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "build-01",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "build-02",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "online-01",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      }
+     ]
+    },
+    "level": {
+     "published": true,
+     "verified": true,
+     "slot": 0,
+     "continent": 0,
+     "concept": "rift",
+     "title": "THE RIFT BRIDGE",
+     "cleared_by": [
+      {
+       "team_id": "00000000-0000-0000-0000-000000000005",
+       "team": "Iron Fist",
+       "best_seconds": 86.4,
+       "first_at": "2026-10-08T11:02:00Z",
+       "player": "eli"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000002",
+       "team": "Void Walkers",
+       "best_seconds": 105.9,
+       "first_at": "2026-10-08T11:18:00Z",
+       "player": "max"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000003",
+       "team": "Gearheads",
+       "best_seconds": 89.1,
+       "first_at": "2026-10-08T14:07:00Z",
+       "player": "rex"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000007",
+       "team": "Span Builders",
+       "best_seconds": 107.7,
+       "first_at": "2026-10-08T14:52:00Z",
+       "player": "cyn"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000004",
+       "team": "Briar Patch",
+       "best_seconds": 121.2,
+       "first_at": "2026-10-08T10:37:00Z",
+       "player": "ada"
+      }
+     ],
+     "cleared_count": 5,
+     "of": 7,
+     "design": {
+      "composite": 78.9,
+      "score": 77.5,
+      "flagged": false,
+      "reasons": [
+       "clear route",
+       "uses the card mechanic"
+      ],
+      "override": null,
+      "reviewed_by": null,
+      "model": "jev"
+     },
+     "rating": {
+      "avg": 4.0,
+      "count": 5,
+      "distribution": {
+       "1": 0,
+       "2": 0,
+       "3": 2,
+       "4": 1,
+       "5": 2
+      },
+      "bayes": 3.62
+     },
+     "owner_cleared": true,
+     "counts": true,
+     "not_counted_reason": null,
+     "owner_player": "ivy"
+    },
+    "play": {
+     "cleared": [
+      {
+       "team_id": "00000000-0000-0000-0000-000000000002",
+       "team": "Void Walkers",
+       "best_seconds": 107.7,
+       "first_at": "2026-10-08T11:23:00Z",
+       "player": "kai"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000006",
+       "team": "Pathfinders",
+       "best_seconds": 49.9,
+       "first_at": "2026-10-08T15:04:00Z",
+       "player": "kai"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000003",
+       "team": "Gearheads",
+       "best_seconds": 106.9,
+       "first_at": "2026-10-08T14:13:00Z",
+       "player": "jo"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000007",
+       "team": "Span Builders",
+       "best_seconds": 98.6,
+       "first_at": "2026-10-08T14:27:00Z",
+       "player": "ivy"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000004",
+       "team": "Briar Patch",
+       "best_seconds": 132.8,
+       "first_at": "2026-10-08T13:37:00Z",
+       "player": "ivy"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000005",
+       "team": "Iron Fist",
+       "best_seconds": 150.7,
+       "first_at": "2026-10-08T12:19:00Z",
+       "player": "jo"
+      }
+     ],
+     "cleared_count": 6,
+     "of": 7
+    },
+    "creativity": {
+     "avg": 5.3,
+     "judges": 4
+    }
+   },
+   "players": [
+    "ivy",
+    "kai",
+    "jo"
+   ]
+  },
+  {
+   "team_id": "00000000-0000-0000-0000-000000000002",
+   "team": "Void Walkers",
+   "is_test": false,
+   "total": 81.3,
+   "rank": 1,
+   "aspects": {
+    "code": {
+     "score": 100.0,
+     "weight": 0.3,
+     "rank": 1
+    },
+    "play": {
+     "score": 71.4,
+     "weight": 0.2,
+     "rank": 2
+    },
+    "quality": {
+     "score": 71.4,
+     "weight": 0.15,
+     "rank": 1
+    },
+    "rating": {
+     "score": 62.5,
+     "weight": 0.15,
+     "rank": 3
+    },
+    "design": {
+     "score": 76.7,
+     "weight": 0.0,
+     "rank": 2
+    },
+    "creativity": {
+     "score": 86.0,
+     "weight": 0.2,
+     "rank": 1
+    }
+   },
+   "breakdown": {
+    "code": {
+     "passed": 6,
+     "of": 6,
+     "challenges": [
+      {
+       "id": "base-01",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "base-02",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "base-03",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "build-01",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "build-02",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "online-01",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      }
+     ]
+    },
+    "level": {
+     "published": true,
+     "verified": true,
+     "slot": 1,
+     "continent": 1,
+     "concept": "clocktower",
+     "title": "THE HOUR TOWER",
+     "cleared_by": [
+      {
+       "team_id": "00000000-0000-0000-0000-000000000001",
+       "team": "Byte Knights",
+       "best_seconds": 79.5,
+       "first_at": "2026-10-08T12:38:00Z",
+       "player": "rex"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000006",
+       "team": "Pathfinders",
+       "best_seconds": 98.6,
+       "first_at": "2026-10-08T13:04:00Z",
+       "player": "nia"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000005",
+       "team": "Iron Fist",
+       "best_seconds": 140.5,
+       "first_at": "2026-10-08T12:30:00Z",
+       "player": "eli"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000003",
+       "team": "Gearheads",
+       "best_seconds": 123.0,
+       "first_at": "2026-10-08T10:03:00Z",
+       "player": "ivy"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000007",
+       "team": "Span Builders",
+       "best_seconds": 127.2,
+       "first_at": "2026-10-08T12:41:00Z",
+       "player": "eli"
+      }
+     ],
+     "cleared_count": 5,
+     "of": 7,
+     "design": {
+      "composite": 62.3,
+      "score": 76.7,
+      "flagged": false,
+      "reasons": [
+       "clear route",
+       "uses the card mechanic"
+      ],
+      "override": null,
+      "reviewed_by": null,
+      "model": "jev"
+     },
+     "rating": {
+      "avg": 3.8,
+      "count": 5,
+      "distribution": {
+       "1": 0,
+       "2": 1,
+       "3": 1,
+       "4": 1,
+       "5": 2
+      },
+      "bayes": 3.5
+     },
+     "owner_cleared": true,
+     "counts": true,
+     "not_counted_reason": null,
+     "owner_player": "rex"
+    },
+    "play": {
+     "cleared": [
+      {
+       "team_id": "00000000-0000-0000-0000-000000000004",
+       "team": "Briar Patch",
+       "best_seconds": 108.5,
+       "first_at": "2026-10-08T15:52:00Z",
+       "player": "oz"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000005",
+       "team": "Iron Fist",
+       "best_seconds": 92.4,
+       "first_at": "2026-10-08T15:24:00Z",
+       "player": "jo"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000007",
+       "team": "Span Builders",
+       "best_seconds": 146.2,
+       "first_at": "2026-10-08T12:01:00Z",
+       "player": "oz"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000006",
+       "team": "Pathfinders",
+       "best_seconds": 152.8,
+       "first_at": "2026-10-08T12:10:00Z",
+       "player": "rex"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000001",
+       "team": "Byte Knights",
+       "best_seconds": 112.5,
+       "first_at": "2026-10-08T13:03:00Z",
+       "player": "oz"
+      }
+     ],
+     "cleared_count": 5,
+     "of": 7
+    },
+    "creativity": {
+     "avg": 8.6,
+     "judges": 3
+    }
+   },
+   "players": [
+    "rex",
+    "jo",
+    "oz"
+   ]
+  },
+  {
+   "team_id": "00000000-0000-0000-0000-000000000003",
+   "team": "Gearheads",
+   "is_test": false,
+   "total": 67.1,
+   "rank": 3,
+   "aspects": {
+    "code": {
+     "score": 83.3,
+     "weight": 0.3,
+     "rank": 3
+    },
+    "play": {
+     "score": 57.1,
+     "weight": 0.2,
+     "rank": 3
+    },
+    "quality": {
+     "score": 57.1,
+     "weight": 0.15,
+     "rank": 3
+    },
+    "rating": {
+     "score": 53.5,
+     "weight": 0.15,
+     "rank": 7
+    },
+    "design": {
+     "score": null,
+     "weight": 0.0,
+     "rank": null
+    },
+    "creativity": {
+     "score": null,
+     "weight": 0.2,
+     "rank": null
+    }
+   },
+   "breakdown": {
+    "code": {
+     "passed": 5,
+     "of": 6,
+     "challenges": [
+      {
+       "id": "base-01",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "base-02",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "base-03",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "build-01",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "build-02",
+       "green": false,
+       "at": null
+      },
+      {
+       "id": "online-01",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      }
+     ]
+    },
+    "level": {
+     "published": true,
+     "verified": true,
+     "slot": 2,
+     "continent": 2,
+     "concept": "scaffold",
+     "title": "THE LANTERN SCAFFOLD",
+     "cleared_by": [
+      {
+       "team_id": "00000000-0000-0000-0000-000000000004",
+       "team": "Briar Patch",
+       "best_seconds": 145.9,
+       "first_at": "2026-10-08T11:09:00Z",
+       "player": "bo"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000002",
+       "team": "Void Walkers",
+       "best_seconds": 48.1,
+       "first_at": "2026-10-08T11:14:00Z",
+       "player": "kai"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000005",
+       "team": "Iron Fist",
+       "best_seconds": 118.3,
+       "first_at": "2026-10-08T10:31:00Z",
+       "player": "ada"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000008",
+       "team": "Night Owls",
+       "best_seconds": 139.4,
+       "first_at": "2026-10-08T11:16:00Z",
+       "player": "jo"
+      }
+     ],
+     "cleared_count": 4,
+     "of": 7,
+     "design": null,
+     "rating": {
+      "avg": 3.25,
+      "count": 4,
+      "distribution": {
+       "1": 0,
+       "2": 2,
+       "3": 0,
+       "4": 1,
+       "5": 1
+      },
+      "bayes": 3.14
+     },
+     "owner_cleared": true,
+     "counts": true,
+     "not_counted_reason": null,
+     "owner_player": "cyn"
+    },
+    "play": {
+     "cleared": [
+      {
+       "team_id": "00000000-0000-0000-0000-000000000002",
+       "team": "Void Walkers",
+       "best_seconds": 72.4,
+       "first_at": "2026-10-08T11:26:00Z",
+       "player": "rex"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000005",
+       "team": "Iron Fist",
+       "best_seconds": 103.2,
+       "first_at": "2026-10-08T14:36:00Z",
+       "player": "nia"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000006",
+       "team": "Pathfinders",
+       "best_seconds": 76.9,
+       "first_at": "2026-10-08T11:44:00Z",
+       "player": "nia"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000004",
+       "team": "Briar Patch",
+       "best_seconds": 142.8,
+       "first_at": "2026-10-08T14:41:00Z",
+       "player": "rex"
+      }
+     ],
+     "cleared_count": 4,
+     "of": 7
+    },
+    "creativity": null
+   },
+   "players": [
+    "cyn",
+    "rex",
+    "nia"
+   ]
+  },
+  {
+   "team_id": "00000000-0000-0000-0000-000000000005",
+   "team": "Iron Fist",
+   "is_test": false,
+   "total": 56.8,
+   "rank": 4,
+   "aspects": {
+    "code": {
+     "score": 83.3,
+     "weight": 0.3,
+     "rank": 3
+    },
+    "play": {
+     "score": 28.6,
+     "weight": 0.2,
+     "rank": 5
+    },
+    "quality": {
+     "score": 42.9,
+     "weight": 0.15,
+     "rank": 5
+    },
+    "rating": {
+     "score": 54.2,
+     "weight": 0.15,
+     "rank": 6
+    },
+    "design": {
+     "score": null,
+     "weight": 0.0,
+     "rank": null
+    },
+    "creativity": {
+     "score": null,
+     "weight": 0.2,
+     "rank": null
+    }
+   },
+   "breakdown": {
+    "code": {
+     "passed": 5,
+     "of": 6,
+     "challenges": [
+      {
+       "id": "base-01",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "base-02",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "base-03",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "build-01",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "build-02",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "online-01",
+       "green": false,
+       "at": null
+      }
+     ]
+    },
+    "level": {
+     "published": true,
+     "verified": true,
+     "slot": 4,
+     "continent": 0,
+     "concept": "barracks",
+     "title": "THE MUSTER YARD",
+     "cleared_by": [
+      {
+       "team_id": "00000000-0000-0000-0000-000000000001",
+       "team": "Byte Knights",
+       "best_seconds": 104.3,
+       "first_at": "2026-10-08T10:48:00Z",
+       "player": "pia"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000002",
+       "team": "Void Walkers",
+       "best_seconds": 102.4,
+       "first_at": "2026-10-08T15:55:00Z",
+       "player": "eli"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000006",
+       "team": "Pathfinders",
+       "best_seconds": 49.1,
+       "first_at": "2026-10-08T12:33:00Z",
+       "player": "max"
+      }
+     ],
+     "cleared_count": 3,
+     "of": 7,
+     "design": null,
+     "rating": {
+      "avg": 3.33,
+      "count": 3,
+      "distribution": {
+       "1": 0,
+       "2": 1,
+       "3": 0,
+       "4": 2,
+       "5": 0
+      },
+      "bayes": 3.17
+     },
+     "owner_cleared": true,
+     "counts": true,
+     "not_counted_reason": null,
+     "owner_player": "oz"
+    },
+    "play": {
+     "cleared": [
+      {
+       "team_id": "00000000-0000-0000-0000-000000000002",
+       "team": "Void Walkers",
+       "best_seconds": 82.7,
+       "first_at": "2026-10-08T11:22:00Z",
+       "player": "oz"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000006",
+       "team": "Pathfinders",
+       "best_seconds": 132.2,
+       "first_at": "2026-10-08T14:34:00Z",
+       "player": "oz"
+      }
+     ],
+     "cleared_count": 2,
+     "of": 7
+    },
+    "creativity": null
+   },
+   "players": [
+    "oz",
+    "gus",
+    "max"
+   ]
+  },
+  {
+   "team_id": "00000000-0000-0000-0000-000000000007",
+   "team": "Span Builders",
+   "is_test": false,
+   "total": 47.0,
+   "rank": 5,
+   "aspects": {
+    "code": {
+     "score": 83.3,
+     "weight": 0.3,
+     "rank": 3
+    },
+    "play": {
+     "score": 0.0,
+     "weight": 0.2,
+     "rank": 7
+    },
+    "quality": {
+     "score": 28.6,
+     "weight": 0.15,
+     "rank": 7
+    },
+    "rating": {
+     "score": 60.0,
+     "weight": 0.15,
+     "rank": 4
+    },
+    "design": {
+     "score": null,
+     "weight": 0.0,
+     "rank": null
+    },
+    "creativity": {
+     "score": null,
+     "weight": 0.2,
+     "rank": null
+    }
+   },
+   "breakdown": {
+    "code": {
+     "passed": 5,
+     "of": 6,
+     "challenges": [
+      {
+       "id": "base-01",
+       "green": false,
+       "at": null
+      },
+      {
+       "id": "base-02",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "base-03",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "build-01",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "build-02",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "online-01",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      }
+     ]
+    },
+    "level": {
+     "published": true,
+     "verified": true,
+     "slot": 6,
+     "continent": 2,
+     "concept": "causeway",
+     "title": "THE OLD CAUSEWAY",
+     "cleared_by": [
+      {
+       "team_id": "00000000-0000-0000-0000-000000000005",
+       "team": "Iron Fist",
+       "best_seconds": 148.9,
+       "first_at": "2026-10-08T12:51:00Z",
+       "player": "jo"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000008",
+       "team": "Night Owls",
+       "best_seconds": 116.5,
+       "first_at": "2026-10-08T15:07:00Z",
+       "player": "oz"
+      }
+     ],
+     "cleared_count": 2,
+     "of": 7,
+     "design": null,
+     "rating": {
+      "avg": 4.0,
+      "count": 2,
+      "distribution": {
+       "1": 0,
+       "2": 0,
+       "3": 1,
+       "4": 0,
+       "5": 1
+      },
+      "bayes": 3.4
+     },
+     "owner_cleared": true,
+     "counts": true,
+     "not_counted_reason": null,
+     "owner_player": "eli"
+    },
+    "play": {
+     "cleared": [],
+     "cleared_count": 0,
+     "of": 7
+    },
+    "creativity": null
+   },
+   "players": [
+    "eli",
+    "ivy",
+    "dex"
+   ]
+  },
+  {
+   "team_id": "00000000-0000-0000-0000-000000000004",
+   "team": "Briar Patch",
+   "is_test": false,
+   "total": 45.1,
+   "rank": 6,
+   "aspects": {
+    "code": {
+     "score": 16.7,
+     "weight": 0.3,
+     "rank": 7
+    },
+    "play": {
+     "score": 42.9,
+     "weight": 0.2,
+     "rank": 4
+    },
+    "quality": {
+     "score": 57.1,
+     "weight": 0.15,
+     "rank": 3
+    },
+    "rating": {
+     "score": 57.2,
+     "weight": 0.15,
+     "rank": 5
+    },
+    "design": {
+     "score": 63.3,
+     "weight": 0.0,
+     "rank": 3
+    },
+    "creativity": {
+     "score": 77.0,
+     "weight": 0.2,
+     "rank": 2
+    }
+   },
+   "breakdown": {
+    "code": {
+     "passed": 1,
+     "of": 6,
+     "challenges": [
+      {
+       "id": "base-01",
+       "green": false,
+       "at": null
+      },
+      {
+       "id": "base-02",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "base-03",
+       "green": false,
+       "at": null
+      },
+      {
+       "id": "build-01",
+       "green": false,
+       "at": null
+      },
+      {
+       "id": "build-02",
+       "green": false,
+       "at": null
+      },
+      {
+       "id": "online-01",
+       "green": false,
+       "at": null
+      }
+     ]
+    },
+    "level": {
+     "published": true,
+     "verified": true,
+     "slot": 3,
+     "continent": 3,
+     "concept": "thorns",
+     "title": "THE BRIAR HALL",
+     "cleared_by": [
+      {
+       "team_id": "00000000-0000-0000-0000-000000000005",
+       "team": "Iron Fist",
+       "best_seconds": 38.0,
+       "first_at": "2026-10-08T11:34:00Z",
+       "player": "nia"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000001",
+       "team": "Byte Knights",
+       "best_seconds": 50.4,
+       "first_at": "2026-10-08T12:39:00Z",
+       "player": "max"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000008",
+       "team": "Night Owls",
+       "best_seconds": 41.1,
+       "first_at": "2026-10-08T11:39:00Z",
+       "player": "oz"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000006",
+       "team": "Pathfinders",
+       "best_seconds": 83.9,
+       "first_at": "2026-10-08T15:16:00Z",
+       "player": "ivy"
+      }
+     ],
+     "cleared_count": 4,
+     "of": 7,
+     "design": {
+      "composite": 73.2,
+      "score": 63.3,
+      "flagged": true,
+      "reasons": [
+       "dense hazards near the core"
+      ],
+      "override": null,
+      "reviewed_by": null,
+      "model": "jev"
+     },
+     "rating": {
+      "avg": 3.5,
+      "count": 4,
+      "distribution": {
+       "1": 0,
+       "2": 0,
+       "3": 2,
+       "4": 2,
+       "5": 0
+      },
+      "bayes": 3.29
+     },
+     "owner_cleared": true,
+     "counts": true,
+     "not_counted_reason": null,
+     "owner_player": "kai"
+    },
+    "play": {
+     "cleared": [
+      {
+       "team_id": "00000000-0000-0000-0000-000000000005",
+       "team": "Iron Fist",
+       "best_seconds": 154.6,
+       "first_at": "2026-10-08T14:23:00Z",
+       "player": "gus"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000007",
+       "team": "Span Builders",
+       "best_seconds": 95.8,
+       "first_at": "2026-10-08T10:54:00Z",
+       "player": "jo"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000006",
+       "team": "Pathfinders",
+       "best_seconds": 97.5,
+       "first_at": "2026-10-08T13:30:00Z",
+       "player": "kai"
+      }
+     ],
+     "cleared_count": 3,
+     "of": 7
+    },
+    "creativity": {
+     "avg": 7.7,
+     "judges": 2
+    }
+   },
+   "players": [
+    "kai",
+    "gus",
+    "jo"
+   ]
+  },
+  {
+   "team_id": "00000000-0000-0000-0000-000000000006",
+   "team": "Pathfinders",
+   "is_test": false,
+   "total": 35.2,
+   "rank": 7,
+   "aspects": {
+    "code": {
+     "score": 33.3,
+     "weight": 0.3,
+     "rank": 6
+    },
+    "play": {
+     "score": 14.3,
+     "weight": 0.2,
+     "rank": 6
+    },
+    "quality": {
+     "score": 42.9,
+     "weight": 0.15,
+     "rank": 5
+    },
+    "rating": {
+     "score": 70.8,
+     "weight": 0.15,
+     "rank": 1
+    },
+    "design": {
+     "score": null,
+     "weight": 0.0,
+     "rank": null
+    },
+    "creativity": {
+     "score": null,
+     "weight": 0.2,
+     "rank": null
+    }
+   },
+   "breakdown": {
+    "code": {
+     "passed": 2,
+     "of": 6,
+     "challenges": [
+      {
+       "id": "base-01",
+       "green": false,
+       "at": null
+      },
+      {
+       "id": "base-02",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "base-03",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "build-01",
+       "green": false,
+       "at": null
+      },
+      {
+       "id": "build-02",
+       "green": false,
+       "at": null
+      },
+      {
+       "id": "online-01",
+       "green": false,
+       "at": null
+      }
+     ]
+    },
+    "level": {
+     "published": true,
+     "verified": true,
+     "slot": 5,
+     "continent": 1,
+     "concept": "road",
+     "title": "THE PILGRIM ROAD",
+     "cleared_by": [
+      {
+       "team_id": "00000000-0000-0000-0000-000000000008",
+       "team": "Night Owls",
+       "best_seconds": 81.4,
+       "first_at": "2026-10-08T10:01:00Z",
+       "player": "fay"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000004",
+       "team": "Briar Patch",
+       "best_seconds": 134.4,
+       "first_at": "2026-10-08T13:16:00Z",
+       "player": "lu"
+      },
+      {
+       "team_id": "00000000-0000-0000-0000-000000000002",
+       "team": "Void Walkers",
+       "best_seconds": 61.6,
+       "first_at": "2026-10-08T14:22:00Z",
+       "player": "dex"
+      }
+     ],
+     "cleared_count": 3,
+     "of": 7,
+     "design": null,
+     "rating": {
+      "avg": 4.67,
+      "count": 3,
+      "distribution": {
+       "1": 0,
+       "2": 0,
+       "3": 0,
+       "4": 1,
+       "5": 2
+      },
+      "bayes": 3.83
+     },
+     "owner_cleared": false,
+     "counts": false,
+     "not_counted_reason": "owner has not cleared it",
+     "owner_player": null
+    },
+    "play": {
+     "cleared": [
+      {
+       "team_id": "00000000-0000-0000-0000-000000000002",
+       "team": "Void Walkers",
+       "best_seconds": 92.6,
+       "first_at": "2026-10-08T15:22:00Z",
+       "player": "lu"
+      }
+     ],
+     "cleared_count": 1,
+     "of": 7
+    },
+    "creativity": null
+   },
+   "players": [
+    "jo",
+    "kai",
+    "lu"
+   ]
+  },
+  {
+   "team_id": "00000000-0000-0000-0000-000000000008",
+   "team": "Night Owls",
+   "is_test": false,
+   "total": 8.3,
+   "rank": 8,
+   "aspects": {
+    "code": {
+     "score": 16.7,
+     "weight": 0.3,
+     "rank": 7
+    },
+    "play": {
+     "score": 0.0,
+     "weight": 0.2,
+     "rank": 7
+    },
+    "quality": {
+     "score": null,
+     "weight": 0.15,
+     "rank": null
+    },
+    "rating": {
+     "score": 0.0,
+     "weight": 0.15,
+     "rank": 8
+    },
+    "design": {
+     "score": null,
+     "weight": 0.0,
+     "rank": null
+    },
+    "creativity": {
+     "score": null,
+     "weight": 0.2,
+     "rank": null
+    }
+   },
+   "breakdown": {
+    "code": {
+     "passed": 1,
+     "of": 6,
+     "challenges": [
+      {
+       "id": "base-01",
+       "green": false,
+       "at": null
+      },
+      {
+       "id": "base-02",
+       "green": false,
+       "at": null
+      },
+      {
+       "id": "base-03",
+       "green": false,
+       "at": null
+      },
+      {
+       "id": "build-01",
+       "green": false,
+       "at": null
+      },
+      {
+       "id": "build-02",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "online-01",
+       "green": false,
+       "at": null
+      }
+     ]
+    },
+    "level": {
+     "published": false,
+     "verified": false,
+     "slot": null,
+     "continent": null,
+     "concept": null,
+     "title": null,
+     "cleared_by": [],
+     "cleared_count": 0,
+     "of": 7,
+     "design": null,
+     "rating": null,
+     "owner_cleared": false,
+     "counts": false,
+     "not_counted_reason": "no level",
+     "owner_player": null
+    },
+    "play": {
+     "cleared": [],
+     "cleared_count": 0,
+     "of": 7
+    },
+    "creativity": null
+   },
+   "players": [
+    "gus",
+    "lu",
+    "oz"
+   ]
+  },
+  {
+   "team_id": "00000000-0000-0000-0000-000000000009",
+   "team": "Unlockd Test",
+   "is_test": true,
+   "total": 50.4,
+   "rank": null,
+   "aspects": {
+    "code": {
+     "score": 100.0,
+     "weight": 0.3,
+     "rank": null
+    },
+    "play": {
+     "score": 0.0,
+     "weight": 0.2,
+     "rank": null
+    },
+    "quality": {
+     "score": 14.3,
+     "weight": 0.15,
+     "rank": null
+    },
+    "rating": {
+     "score": 56.2,
+     "weight": 0.15,
+     "rank": null
+    },
+    "design": {
+     "score": null,
+     "weight": 0.0,
+     "rank": null
+    },
+    "creativity": {
+     "score": null,
+     "weight": 0.2,
+     "rank": null
+    }
+   },
+   "breakdown": {
+    "code": {
+     "passed": 6,
+     "of": 6,
+     "challenges": [
+      {
+       "id": "base-01",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "base-02",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "base-03",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "build-01",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "build-02",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      },
+      {
+       "id": "online-01",
+       "green": true,
+       "at": "2026-10-08T11:20:00Z"
+      }
+     ]
+    },
+    "level": {
+     "published": true,
+     "verified": true,
+     "slot": 8,
+     "continent": 0,
+     "concept": "ramparts",
+     "title": "THE RAMPART WALLS",
+     "cleared_by": [
+      {
+       "team_id": "00000000-0000-0000-0000-000000000003",
+       "team": "Gearheads",
+       "best_seconds": 159.2,
+       "first_at": "2026-10-08T10:09:00Z",
+       "player": "cyn"
+      }
+     ],
+     "cleared_count": 1,
+     "of": 7,
+     "design": null,
+     "rating": {
+      "avg": 4.0,
+      "count": 1,
+      "distribution": {
+       "1": 0,
+       "2": 0,
+       "3": 0,
+       "4": 1,
+       "5": 0
+      },
+      "bayes": 3.25
+     },
+     "owner_cleared": true,
+     "counts": true,
+     "not_counted_reason": null,
+     "owner_player": "jo"
+    },
+    "play": {
+     "cleared": [],
+     "cleared_count": 0,
+     "of": 7
+    },
+    "creativity": null
+   },
+   "players": [
+    "jo",
+    "eli",
+    "bo"
+   ]
+  }
+ ]
+}

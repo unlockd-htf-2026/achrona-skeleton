@@ -196,5 +196,48 @@ void main() {
           seconds: 1, server: 'http://w', teamKey: 'k', client: client);
       expect(calls, 1);
     });
+    test('signs as the player, and says when it made your own level count',
+        () async {
+      late http.Request sent;
+      final counts = await reportLevelClear(theirs,
+          seconds: 12,
+          server: 'http://w',
+          teamKey: 'k',
+          playerId: 'p-1',
+          client: MockClient((r) async {
+            sent = r;
+            return http.Response('{"accepted":true,"owner_clear":true}', 200);
+          }));
+      expect(sent.headers['X-Player-Id'], 'p-1');
+      expect(counts, isTrue);
+    });
+  });
+
+  group('rateLevel (POST /level-rating)', () {
+    test('posts the level and the stars, signed as the player', () async {
+      late http.Request sent;
+      final ok = await rateLevel('id-a', 4,
+          server: 'http://w',
+          teamKey: 'k',
+          playerId: 'p-1',
+          client: MockClient((r) async {
+            sent = r;
+            return http.Response('{"rated":true}', 200);
+          }));
+      expect(ok, isTrue);
+      expect(sent.url.toString(), 'http://w/level-rating');
+      expect(sent.headers['Authorization'], 'Bearer k');
+      expect(sent.headers['X-Player-Id'], 'p-1');
+      expect(jsonDecode(sent.body), {'level_team_id': 'id-a', 'stars': 4});
+    });
+
+    test('a refusal (not cleared, test team) is quiet, not a crash', () async {
+      final ok = await rateLevel('id-a', 5,
+          server: 'http://w',
+          teamKey: 'k',
+          client: MockClient(
+              (_) async => http.Response('{"error":"clear it first"}', 409)));
+      expect(ok, isFalse);
+    });
   });
 }

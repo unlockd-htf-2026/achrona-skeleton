@@ -17,6 +17,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../session.dart';
+
 /// One node this run cleansed, as the Worker reports it (D-06).
 /// `drained` is the server-computed delta — never anything the client asked for.
 typedef HealedNode = ({String challengeId, double drained});
@@ -79,6 +81,13 @@ class RunLink {
       'TEAM_ID',
       defaultValue: '00000000-0000-0000-0000-0000000000a1',
     );
+    // The logged-in team wins; its player rides along on every request
+    // (a header added by the client, so the submit itself stays as written).
+    final s = Session.current;
+    if (url.isNotEmpty && s != null && s.isTeam && s.teamId != null) {
+      return RunLink(url, s.code, s.teamId!,
+          client: _PlayerClient(http.Client(), s.playerId));
+    }
     if (url.isEmpty || key.isEmpty) return null;
     return RunLink(url, key, team);
   }
@@ -105,5 +114,18 @@ class RunLink {
       throw Exception('${r.statusCode} ${body['error'] ?? r.reasonPhrase}');
     }
     return body;
+  }
+}
+
+/// Adds `X-Player-Id` — which of the team's players ran — to every request.
+class _PlayerClient extends http.BaseClient {
+  _PlayerClient(this._inner, this._playerId);
+  final http.Client _inner;
+  final String? _playerId;
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) {
+    if (_playerId != null) request.headers['X-Player-Id'] = _playerId;
+    return _inner.send(request);
   }
 }

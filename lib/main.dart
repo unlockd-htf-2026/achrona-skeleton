@@ -37,6 +37,10 @@ import 'globe/world.dart';
 import 'globe/palette.dart';
 import 'globe/progress.dart';
 import 'hero_model.dart';
+import 'judge.dart';
+import 'leaderboard.dart';
+import 'login.dart';
+import 'session.dart';
 import 'level_one.dart';
 import 'my_level.dart';
 import 'team_levels.dart';
@@ -104,7 +108,62 @@ class _GlobePageState extends State<GlobePage> {
   void initState() {
     super.initState();
     _build();
+    unawaited(_initSession());
+    // The Worker stopped knowing this player: log in again.
+    Session.rejected.addListener(_onRejected);
+    // `?board`: the venue's big screen opens straight onto the leaderboard.
+    if (Uri.base.queryParameters.containsKey('board')) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _openBoard());
+    }
   }
+
+  /// Who is playing: the remembered login, else the dev key. A build that
+  /// talks to a server asks for a login on first launch (not the showcase,
+  /// and not the venue board).
+  Future<void> _initSession() async {
+    final s = await Session.restore() ??
+        (Session.current = Session.devFallback(
+            const String.fromEnvironment('TEAM_API_KEY'),
+            const String.fromEnvironment('TEAM_ID',
+                defaultValue: '00000000-0000-0000-0000-0000000000a1')));
+    if (mounted) setState(() {});
+    const server = String.fromEnvironment('AI_SERVER_URL');
+    final judging = Uri.base.queryParameters.containsKey('judge');
+    if (judging && s != null && s.isJudge) return _openJudge();
+    if ((s == null || judging) && server.isNotEmpty &&
+        (!kShowcase || judging) &&
+        !Uri.base.queryParameters.containsKey('board')) {
+      await _login();
+    }
+  }
+
+  void _onRejected() {
+    if (mounted) unawaited(_login());
+  }
+
+  Future<void> _login() async {
+    final s = await Navigator.of(context)
+        .push(MaterialPageRoute<Session?>(builder: (_) => const LoginPage()));
+    if (mounted) setState(() {});
+    if (s != null && s.isJudge) _openJudge();
+  }
+
+  /// The jury's screen. ▶ on a team drops back to the globe on its level.
+  void _openJudge() => Navigator.of(context).push(MaterialPageRoute<void>(
+        builder: (ctx) => JudgePage(onPlay: (teamId) {
+          final t = _teams.indexWhere((l) => l.teamId == teamId);
+          Navigator.of(ctx).pop();
+          if (t >= 0) _selectLevel(kLevels.length + t);
+        }),
+      ));
+
+  Future<void> _logout() async {
+    await Session.logout();
+    await _login();
+  }
+
+  void _openBoard() => Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const LeaderboardPage()));
 
   Future<void> _build() async {
     try {
@@ -112,6 +171,9 @@ class _GlobePageState extends State<GlobePage> {
 
       _void = await dressPlanet(scene);
       _desyncFx = await addDesyncEffect(scene);
+      // Last pass: the frame over the page colour, opaque — Safari otherwise
+      // blows the translucent corona out (see shaders/opaque.frag).
+      await addOpaqueBackdrop(scene, kBgVoid);
       scene.add(Node()..addComponent(_EveryFrame(_tickDesync)));
 
       final terr = await Territories.load();
@@ -555,18 +617,19 @@ class _GlobePageState extends State<GlobePage> {
           // N can swap in any level, ours or a team's: name it from _levels.
           nameOf: (spec) =>
               _levels.where((l) => identical(l.$2, spec)).firstOrNull?.$1,
-          onCleared: (spec, seconds) {
+          teamIdOf: (spec) =>
+              _teams.where((t) => identical(t.spec, spec)).firstOrNull?.teamId,
+          onCleared: (spec, seconds) async {
             final i = _levels.indexWhere((l) => identical(l.$2, spec));
             if (i >= 0 && _cleared.add(i)) {
               _newlyCleared.add(i);
               _progress?.clear(_levels[i].$1);
             }
-            // Another team's level: count it (every clear, for the best time).
-            // The first one drains the owner's continent and Realtime flares it.
+            // A team level: count it (every clear, for the best time). The
+            // first clear of another team's level drains its continent and
+            // Realtime flares it; a clear of your own is what makes it count.
             final t = i - kLevels.length;
-            if (t >= 0) {
-              unawaited(reportLevelClear(_teams[t], seconds: seconds));
-            }
+            return t >= 0 && await reportLevelClear(_teams[t], seconds: seconds);
           },
         ),
       ),
@@ -710,6 +773,14 @@ class _GlobePageState extends State<GlobePage> {
                     ),
             ),
             if (kShowStats) const Positioned(top: 12, right: 16, child: _Fps()),
+            // Who is playing, and the way to switch team or log out.
+            if (!kShowcase)
+              Positioned(
+                top: 14,
+                right: kShowStats ? 90 : 16,
+                child: _Account(
+                    onLogin: _login, onLogout: _logout, onJudge: _openJudge),
+              ),
           // The opening's caption card.
             Positioned(
               left: 24,
@@ -717,6 +788,31 @@ class _GlobePageState extends State<GlobePage> {
               bottom: 36,
               child: IgnorePointer(
                 child: Center(child: _CaptionCard(_caption)),
+              ),
+            ),
+            // The leaderboard, above the level picker; also hidden through the
+            // opening.
+            Positioned(
+              right: 28,
+              bottom: 74,
+              child: IgnorePointer(
+                ignoring: _intro != null,
+                child: AnimatedOpacity(
+                  opacity: _intro == null ? 1 : 0,
+                  duration: const Duration(milliseconds: 800),
+                  child: OutlinedButton.icon(
+                    onPressed: _openBoard,
+                    icon: const Icon(Icons.leaderboard, size: 18),
+                    label: const Text('LEADERBOARD',
+                        style: TextStyle(letterSpacing: 2)),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(kCyan),
+                      side: const BorderSide(color: Color(kCyan)),
+                      backgroundColor: const Color(0xCC0A0818),
+                      shape: const StadiumBorder(),
+                    ),
+                  ),
+                ),
               ),
             ),
             Positioned(
@@ -924,6 +1020,7 @@ class _LevelRun extends StatefulWidget {
       {required this.start,
       required this.hero,
       required this.nameOf,
+      required this.teamIdOf,
       required this.onCleared});
 
   final LevelSpec start;
@@ -932,8 +1029,12 @@ class _LevelRun extends StatefulWidget {
   /// The level's display name: ours, or a team's `team · card`.
   final String? Function(LevelSpec) nameOf;
 
-  /// A level's gate was reached, with the run's play time in seconds.
-  final void Function(LevelSpec spec, double seconds) onCleared;
+  /// The team that made a level; null for ours.
+  final String? Function(LevelSpec) teamIdOf;
+
+  /// A level's gate was reached, with the run's play time in seconds;
+  /// completes true when that made the player's own level count.
+  final Future<bool> Function(LevelSpec spec, double seconds) onCleared;
 
   @override
   State<_LevelRun> createState() => _LevelRunState();
@@ -947,8 +1048,54 @@ class _LevelRunState extends State<_LevelRun> {
         key: ObjectKey(_spec),
         spec: _spec,
         name: widget.nameOf(_spec),
+        ownerTeamId: widget.teamIdOf(_spec),
         hero: widget.hero,
         onCleared: widget.onCleared,
         onNext: (next) => setState(() => _spec = next),
       );
+}
+
+/// The account chip: "ada · byte-knights" (or the judge, or LOG IN), with
+/// switch team / log out behind it.
+class _Account extends StatelessWidget {
+  const _Account(
+      {required this.onLogin, required this.onLogout, required this.onJudge});
+  final VoidCallback onLogin;
+  final VoidCallback onLogout;
+  final VoidCallback onJudge;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Session.current;
+    const style = TextStyle(color: Color(kCyan), letterSpacing: 1.5, fontSize: 12);
+    if (s == null || (s.isTeam && s.playerId == null && s.nickname == null)) {
+      // Nobody, or only the dev key: offer the login.
+      return TextButton.icon(
+        onPressed: onLogin,
+        icon: const Icon(Icons.login, size: 16, color: Color(kCyan)),
+        label: const Text('LOG IN', style: style),
+      );
+    }
+    final who = s.isJudge ? 'judge ${s.judge}' : '${s.nickname} · ${s.team}';
+    return PopupMenuButton<String>(
+      color: const Color(0xFF14102A),
+      onSelected: (v) => v == 'out' ? onLogout() : onJudge(),
+      itemBuilder: (_) => [
+        if (s.isJudge)
+          const PopupMenuItem(
+              value: 'judge',
+              child: Text('Judge screen', style: TextStyle(color: Colors.white))),
+        const PopupMenuItem(
+            value: 'out',
+            child: Text('Switch team / log out',
+                style: TextStyle(color: Colors.white))),
+      ],
+      child: Chip(
+        avatar: const Icon(Icons.person, size: 16, color: Color(kCyan)),
+        label: Text(who, style: style),
+        backgroundColor: const Color(0xCC0A0818),
+        side: const BorderSide(color: Color(0x662BE2FF)),
+      ),
+    );
+  }
 }

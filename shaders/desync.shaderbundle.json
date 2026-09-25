@@ -2,5 +2,9 @@
   "DesyncFragment": {
     "type": "fragment",
     "file": "shaders/desync.frag"
+  },
+  "OpaqueFragment": {
+    "type": "fragment",
+    "file": "shaders/opaque.frag"
   }
 }

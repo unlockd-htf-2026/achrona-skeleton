@@ -12,6 +12,7 @@
 /// and every prop is placed against a solidity check so nothing floats.
 library;
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:achrona_platformer_engine/achrona_platformer_engine.dart';
@@ -28,6 +29,8 @@ import 'globe/run_link.dart';
 import 'asset_cache.dart';
 import 'hero_model.dart' show loadClips;
 import 'kit.dart';
+import 'session.dart';
+import 'team_levels.dart' show rateLevel;
 
 export 'kit.dart';
 
@@ -1421,6 +1424,7 @@ class LevelOne extends StatefulWidget {
     this.onCleared,
     this.onNext,
     this.name,
+    this.ownerTeamId,
   });
 
   /// Its name on the globe ("II · THE DESCENT"), shown at the top — levels
@@ -1429,8 +1433,13 @@ class LevelOne extends StatefulWidget {
 
   /// Told when [spec]'s gate is reached — the globe marks its landmark —
   /// with the run's play time in seconds: the same clock the end screen and
-  /// the run push use (fixed-step frames, the opening excluded).
-  final void Function(LevelSpec spec, double seconds)? onCleared;
+  /// the run push use (fixed-step frames, the opening excluded). Completes
+  /// true when that clear made the player's own team level count.
+  final Future<bool> Function(LevelSpec spec, double seconds)? onCleared;
+
+  /// The team that made this level, for a team level; null for ours. Another
+  /// team's level can be rated once cleared.
+  final String? ownerTeamId;
 
   /// Asked to go on to the next level. Without it (the standalone build) the
   /// level replaces its own route.
@@ -1464,6 +1473,9 @@ class _LevelOneState extends State<LevelOne> with SingleTickerProviderStateMixin
   int _fragments = 0;
   int _fragmentTotal = 0;
   int _unlockFrames = 0;
+
+  /// This clear made the player's own level count (the Worker said so).
+  bool _levelCounts = false;
   bool _dashIsNew = true;
   bool _won = false;
   bool _gateLive = false;
@@ -1961,6 +1973,18 @@ class _LevelOneState extends State<LevelOne> with SingleTickerProviderStateMixin
     _clipName = name;
   }
 
+  void _reportCleared() {
+    widget.onCleared?.call(widget.spec, _runFrames / 60).then((counts) {
+      if (counts && mounted) setState(() => _levelCounts = true);
+    });
+  }
+
+  /// Another team's level, cleared by a logged-in team: it can be rated.
+  bool get _canRate {
+    final owner = widget.ownerTeamId, me = Session.current;
+    return owner != null && me != null && me.isTeam && owner != me.teamId;
+  }
+
   /// On to the next level, if this one has one and you have finished it.
   ///
   /// A whole new widget rather than a rebuilt scene: every node, batch, light
@@ -2253,6 +2277,8 @@ class _LevelOneState extends State<LevelOne> with SingleTickerProviderStateMixin
                 '${total.toStringAsFixed(1)}$rank',
           });
     }).catchError((Object e) {
+      // The team's players were reset: back to the login (the globe asks).
+      unawaited(Session.checkRejected(403, '$e'));
       if (mounted) setState(() => _healLine = 'the world did not answer: $e');
     });
   }
@@ -2357,7 +2383,7 @@ class _LevelOneState extends State<LevelOne> with SingleTickerProviderStateMixin
         aabbOverlap(px, py, pw, ph, door.x, door.y, 40, 56)) {
       _won = true;
       _pushRun(completed: true);
-      widget.onCleared?.call(widget.spec, _runFrames / 60);
+      _reportCleared();
     }
 
     for (final e in _enemies) {
@@ -2775,6 +2801,20 @@ class _LevelOneState extends State<LevelOne> with SingleTickerProviderStateMixin
                             color: Colors.white.withValues(alpha: 0.7),
                             fontSize: 14),
                       ),
+                      if (_won && _levelCounts) ...[
+                        const SizedBox(height: 18),
+                        const Text(
+                          'YOUR LEVEL NOW COUNTS — every team can score on it',
+                          style: TextStyle(
+                              color: Color(0xFF2BE2FF),
+                              fontSize: 15,
+                              letterSpacing: 1.5),
+                        ),
+                      ],
+                      if (_won && _canRate) ...[
+                        const SizedBox(height: 16),
+                        RateLevel(levelTeamId: widget.ownerTeamId!),
+                      ],
                       if (_healLine != null) ...[
                         const SizedBox(height: 18),
                         Text(
@@ -2919,7 +2959,7 @@ class _LevelOneState extends State<LevelOne> with SingleTickerProviderStateMixin
                     _won = true;
                     _pushRun(completed: true);
                   });
-                  widget.onCleared?.call(widget.spec, _runFrames / 60);
+                  _reportCleared();
                 }),
                 const SizedBox(width: 10),
                 // A full Desync burst on demand — the glitch is otherwise only
@@ -2997,4 +3037,51 @@ class _LevelOneState extends State<LevelOne> with SingleTickerProviderStateMixin
               style: const TextStyle(color: Color(0xFF2BE2FF), fontSize: 16)),
         ),
       );
+}
+
+/// "Rate this level": five stars, one tap, and a skip. Tapping again changes
+/// the rating (the Worker overwrites); a refusal is quiet.
+class RateLevel extends StatefulWidget {
+  const RateLevel({super.key, required this.levelTeamId});
+  final String levelTeamId;
+
+  @override
+  State<RateLevel> createState() => _RateLevelState();
+}
+
+class _RateLevelState extends State<RateLevel> {
+  int _stars = 0;
+  bool _skipped = false;
+
+  Future<void> _rate(int n) async {
+    setState(() => _stars = n);
+    await rateLevel(widget.levelTeamId, n);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_skipped) return const SizedBox.shrink();
+    return Column(mainAxisSize: MainAxisSize.min, children: [
+      Text(_stars == 0 ? 'RATE THIS LEVEL' : 'THANKS — tap to change',
+          style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.6),
+              fontSize: 12,
+              letterSpacing: 2)),
+      Row(mainAxisSize: MainAxisSize.min, children: [
+        for (var n = 1; n <= 5; n++)
+          IconButton(
+            tooltip: '$n',
+            onPressed: () => _rate(n),
+            icon: Icon(n <= _stars ? Icons.star : Icons.star_border,
+                color: const Color(0xFFFFC94D), size: 30),
+          ),
+        if (_stars == 0)
+          TextButton(
+            onPressed: () => setState(() => _skipped = true),
+            child: Text('skip',
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.45))),
+          ),
+      ]),
+    ]);
+  }
 }

@@ -71,6 +71,7 @@ flutter:
   assets:
     - assets/hexes.bin
     - assets/hexes.json
+    - assets/leaderboard/
     - assets/models/
     - assets/models/ranger/
     - assets/levels/dungeon/

@@ -15,6 +15,7 @@ import 'package:http/http.dart' as http;
 
 import 'concepts.dart';
 import 'kit.dart';
+import 'session.dart';
 
 /// Where the Worker is and who we are: the same `--dart-define`s as RunLink.
 const _server = String.fromEnvironment('AI_SERVER_URL');
@@ -126,36 +127,77 @@ Future<List<TeamLevel>> _localTeamLevels() async {
 }
 
 /// Tell the Worker this team cleared [level] (the game only calls a level
-/// cleared once all three fragments are in). The first clear drains the
-/// owner's continent; the globe hears it over Realtime, so nothing comes back.
-/// Best-effort: offline, a local level, or a rejection (your own level, not
-/// verified) is logged and dropped.
-Future<void> reportLevelClear(TeamLevel level,
+/// cleared once all three fragments are in). The first clear of another
+/// team's level drains its continent (the globe hears it over Realtime); a
+/// clear of your OWN level is what makes it count. True when this clear made
+/// the player's own level count (`owner_clear`).
+/// Best-effort: offline, a local level, or a rejection is logged and dropped.
+Future<bool> reportLevelClear(TeamLevel level,
     {required double seconds,
     String server = _server,
-    String teamKey = _teamKey,
+    String? teamKey,
+    String? playerId,
     http.Client? client}) async {
   final id = level.teamId;
-  if (server.isEmpty || teamKey.isEmpty || id == null) return;
+  final key = teamKey ?? Session.current?.code ?? _teamKey;
+  if (server.isEmpty || key.isEmpty || id == null) return false;
   final c = client ?? http.Client();
   try {
     final r = await c
         .post(
           Uri.parse('$server/level-clear'),
-          headers: {
-            'Authorization': 'Bearer $teamKey',
-            'Content-Type': 'application/json',
-          },
+          headers: _signed(key, playerId),
           body: jsonEncode(
               {'level_team_id': id, 'seconds': seconds, 'fragments': 3}),
         )
         .timeout(const Duration(seconds: 8));
     if (r.statusCode != 200) {
       debugPrint('level clear not counted: ${r.statusCode} ${r.body}');
+      await Session.checkRejected(r.statusCode, r.body);
+      return false;
     }
+    return (jsonDecode(r.body) as Map<String, dynamic>)['owner_clear'] == true;
   } catch (e) {
     debugPrint('level clear not sent: $e');
+    return false;
   } finally {
     if (client == null) c.close();
   }
 }
+
+/// Rate another team's level, 1–5 stars (re-rating overwrites). The Worker
+/// refuses your own level, one you have not cleared, and test teams; any
+/// refusal is quiet. True when the stars were taken.
+Future<bool> rateLevel(String levelTeamId, int stars,
+    {String server = _server,
+    String? teamKey,
+    String? playerId,
+    http.Client? client}) async {
+  final key = teamKey ?? Session.current?.code ?? _teamKey;
+  if (server.isEmpty || key.isEmpty) return false;
+  final c = client ?? http.Client();
+  try {
+    final r = await c
+        .post(Uri.parse('$server/level-rating'),
+            headers: _signed(key, playerId),
+            body: jsonEncode({'level_team_id': levelTeamId, 'stars': stars}))
+        .timeout(const Duration(seconds: 8));
+    if (r.statusCode != 200) {
+      debugPrint('rating not taken: ${r.statusCode}');
+      await Session.checkRejected(r.statusCode, r.body);
+    }
+    return r.statusCode == 200;
+  } catch (e) {
+    debugPrint('rating not sent: $e');
+    return false;
+  } finally {
+    if (client == null) c.close();
+  }
+}
+
+/// The team key, and which player (the logged-in one unless given).
+Map<String, String> _signed(String key, String? playerId) => {
+      'Authorization': 'Bearer $key',
+      'X-Player-Id': ?(playerId ?? Session.current?.playerId),
+      'Content-Type': 'application/json',
+    };
